@@ -1,38 +1,36 @@
 /**
  * Trust copy: how ordering works, the About block, and reviews.
+ * Check every line before publishing. Delete anything that is not true.
  */
 
 export const trust = {
   about: {
-    eyebrow: 'About Bobo Collections',
-    heading: 'Imported with care, chosen by hand.',
-    body: 'Bobo Collections has been dressing the lady of class for years — sourcing bespoke shoes, bags and accessories from Italy, China, Turkey and the UK. Every piece is hand-selected and checked in person — stitching, hardware, lining and fit — before it earns a place on our shelves. If it would not pass our own standards, it does not reach yours.',
+    eyebrow: 'About us',
+    heading: 'Who we are',
+    body: 'Bobo Collections is a shop in Adenta, Accra, selling imported shoes, bags and accessories. We select each piece ourselves and confirm stock and price with you on WhatsApp before you pay.',
   },
 
   steps: [
     {
-      title: 'Choose a piece',
+      title: 'Choose',
       body: 'Browse the shop or the gallery. Pick your item, size and colour.',
     },
     {
-      title: 'Confirm on WhatsApp',
-      body: 'Send your order. We confirm stock, price and delivery with you before you pay.',
+      title: 'Send your order',
+      body: 'Your order opens in WhatsApp with the details filled in. We reply to confirm stock and price.',
     },
     {
-      title: 'Pay, then collect or receive',
-      body: 'Pay by Mobile Money or bank transfer. Collect from the shop, or arrange delivery.',
+      title: 'Pay and collect',
+      body: 'Pay once your order is confirmed. Collect at the shop in Adenta, or ask us about delivery.',
     },
   ],
 
-  /** Shown under the steps. Only state a policy you actually keep. */
-  returns: 'Unworn items in their original packaging can be exchanged within 3 days of collection or delivery, with your receipt. Bespoke and made-to-measure pieces are made for you alone and cannot be exchanged — we confirm every detail with you before the order is placed.',
+  /** One plain sentence. Keep it only if it is your real policy. */
+  returns: 'Ask us about exchanges before you buy. We will tell you our policy for your piece.',
 
-  /** Shown in the order form. */
-  payment: 'We send our Mobile Money number or bank account details on WhatsApp once your order is confirmed — never pay before you hear from us.',
+  /** Shown in the order form. Fill in your real payment details, or delete this line. */
+  payment: 'Payment details are sent on WhatsApp once your order is confirmed.',
 
-  /**
-   * Real customer reviews only. Leave empty until you have them; the section
-   * stays hidden while this list is empty. Never invent a quote.
-   */
-  reviews: [] as { quote: string; name: string }[],
+  /** Real customer reviews only. Leave empty until you have them. Never invent a quote. */
+  reviews: [] as {quote: string; name: string}[],
 };
