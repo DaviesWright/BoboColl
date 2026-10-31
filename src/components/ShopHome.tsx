@@ -9,10 +9,29 @@ import {trust} from '../trust';
 import {ShopCarousel} from './ShopCarousel';
 
 type Filter = 'All' | Category;
+type Sort = '' | 'lo' | 'hi';
 
 const FILTERS: Filter[] = ['All', 'Shoes', 'Bags', 'Accessories'];
 /** How many pieces appear on the home page. The full range is in the Gallery. */
 const SHOWN = 8;
+const GREETING = 'Hello Bobo Collections, I would like to see your current range.';
+
+/** Reads the first number in a price such as "GHS 450". Prices without a number sort last. */
+function priceValue(p: Product): number {
+  const m = p.price.replace(/,/g, '').match(/\d+(\.\d+)?/);
+  return m ? Number(m[0]) : Number.POSITIVE_INFINITY;
+}
+
+function byPrice(sort: Sort) {
+  return (a: Product, b: Product) => {
+    const x = priceValue(a);
+    const y = priceValue(b);
+    if (x === y) return 0;
+    if (!Number.isFinite(x)) return 1;
+    if (!Number.isFinite(y)) return -1;
+    return sort === 'lo' ? x - y : y - x;
+  };
+}
 
 /** Opens WhatsApp with one item pre-filled, so a customer can order in one tap. */
 const orderItem = (p: Product) => {
@@ -20,21 +39,23 @@ const orderItem = (p: Product) => {
   openWhatsApp(waLink(text), 'shop_order', p.name);
 };
 
-/** The shop front: carousel, search, featured pieces, how ordering works, about, visit, and the atelier link. */
+/** The shop front: carousel, search, filters, sort, featured pieces, how ordering works, about, visit, and the atelier link. */
 export function ShopHome() {
   const ref = useReveals<HTMLElement>();
   const {items} = useCatalog();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('All');
+  const [sort, setSort] = useState<Sort>('');
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return items.filter(
+    const list = items.filter(
       (p) =>
         (filter === 'All' || p.category === filter) &&
         (q === '' || `${p.name} ${p.description} ${p.category}`.toLowerCase().includes(q)),
     );
-  }, [query, filter, items]);
+    return sort ? [...list].sort(byPrice(sort)) : list;
+  }, [query, filter, sort, items]);
 
   const featured = matches.slice(0, SHOWN);
 
@@ -61,25 +82,33 @@ export function ShopHome() {
               aria-label="Search the shop"
               className="w-full bg-transparent py-4 text-[15px] text-ink outline-none placeholder:text-ink-soft"
             />
-            <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-pill bg-gold text-white shadow-accent">
-              →
-            </span>
           </div>
 
-          <div role="group" aria-label="Filter by category" className="mt-6 flex flex-wrap gap-2">
-            {FILTERS.map((f) => (
-              <button
-                key={f}
-                type="button"
-                aria-pressed={filter === f}
-                onClick={() => setFilter(f)}
-                className={`rounded-pill border px-4 py-2 text-sm transition-colors ${
-                  filter === f ? 'border-ink bg-ink text-white' : 'border-line bg-white text-ink hover:border-ink'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
+          <div data-reveal className="mt-6 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-b border-line">
+            <div role="group" aria-label="Filter by category" className="flex gap-7 overflow-x-auto">
+              {FILTERS.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  aria-pressed={filter === f}
+                  onClick={() => setFilter(f)}
+                  className={`border-b-2 py-3 text-sm whitespace-nowrap transition-colors ${
+                    filter === f ? 'border-ink text-ink' : 'border-transparent text-ink-soft hover:text-ink'
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+
+            <label className="flex items-center gap-3 py-3 text-sm text-ink-soft">
+              Sort
+              <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="bg-transparent text-ink outline-none">
+                <option value="">Featured</option>
+                <option value="lo">Price: low to high</option>
+                <option value="hi">Price: high to low</option>
+              </select>
+            </label>
           </div>
         </div>
       </section>
@@ -206,24 +235,32 @@ export function ShopHome() {
         </div>
       </section>
 
-      <section aria-labelledby="made-title" className="bg-atelier px-6 py-24 sm:px-8 md:px-[6vw]">
-        <div data-reveal className="mx-auto max-w-[1200px] md:flex md:items-end md:justify-between md:gap-12">
+      <section aria-labelledby="made-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
+        <div data-reveal className="mx-auto flex max-w-[1200px] flex-col gap-6 rounded-card bg-white p-6 shadow-card md:flex-row md:items-center md:justify-between md:p-12">
           <div>
             <p className="label text-gold">{home.madeEyebrow}</p>
-            <h2 id="made-title" className="mt-3 font-display text-display font-light text-bone">
+            <h2 id="made-title" className="mt-3 font-sans text-2xl font-semibold tracking-[-0.02em] text-ink">
               {home.madeHeading}
             </h2>
-            <p className="mt-4 max-w-[34rem] text-body text-bone/70">{home.madeBody}</p>
+            <p className="mt-3 max-w-[34rem] text-sm text-ink-soft">{home.madeBody}</p>
           </div>
           <button
             type="button"
             onClick={() => navigate('/atelier')}
-            className="label mt-8 rounded-[2px] border border-gold px-6 py-3.5 text-gold transition-colors hover:bg-gold hover:text-ink md:mt-0"
+            className="rounded-pill border border-ink px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-ink hover:text-white"
           >
             {home.madeCta}
           </button>
         </div>
       </section>
+
+      <button
+        type="button"
+        onClick={() => openWhatsApp(waLink(GREETING), 'mobile_bar')}
+        className="label fixed inset-x-4 bottom-4 z-40 flex h-14 items-center justify-center rounded-pill bg-ink text-bone shadow-card md:hidden"
+      >
+        Order on WhatsApp
+      </button>
     </>
   );
 }

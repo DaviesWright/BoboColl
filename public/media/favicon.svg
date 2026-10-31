@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Bobo Collections">
+  <defs>
+    <path id="heel" d="M7 21C8 18 13 17 16 20Q26 35 37 39C47 42 55 48 58 56C55 58 49 58 45 56C38 52 29 46 19 43L16 58H12.5L12 42C8 38 6 28 7 21Z"/>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#f3eee6"/>
+  <use href="#heel" transform="translate(3 3) scale(.72)" fill="#8c1a1f"/>
+  <use href="#heel" transform="translate(17 14) scale(.72)" fill="#d62828" stroke="#f3eee6" stroke-width="2.4" paint-order="stroke"/>
+</svg>

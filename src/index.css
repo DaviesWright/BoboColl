@@ -14,12 +14,12 @@ html.lenis body {
 
 /* ------------------------------------------------------------------
    Type system
-   Display: Cormorant Garamond, used on the atelier page.
-   Text and labels: Jost, used across the shop.
+   Display: Cormorant Garamond, used on the atelier page and in headings.
+   Text and labels: Hanken Grotesk, used across the shop.
    ------------------------------------------------------------------ */
 @theme {
   --font-display: "Cormorant Garamond", "Times New Roman", serif;
-  --font-sans: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Deep oxblood-black: text on light pages, and the dark footer and atelier backgrounds. */
   --color-ink: #160808;
@@ -52,16 +52,16 @@ html.lenis body {
   --color-shop: #3a1316;
   --color-bespoke: #1d1212;
 
-  /* Shape. Cards and tiles follow the reference's 28px and 20px radii; controls are pills. */
+  /* Shape. Cards and tiles follow the 28px and 20px radii; controls are pills. */
   --radius-card: 28px;
   --radius-tile: 20px;
   --radius-pill: 9999px;
 
-  /* Shop type and rhythm, taken from the reference: tight tracking, compact sections. */
+  /* Shop rhythm */
   --tracking-shop: -0.02em;
   --spacing-section: 4rem;
 
-  /* Elevation. Two-layer soft shadow for cards, a single soft shadow for small chips,
+  /* Elevation: two-layer soft shadow for cards, a single soft shadow for small chips,
      and a red-tinted glow for the primary button. */
   --shadow-card: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
   --shadow-soft: rgba(0, 0, 0, 0.06) 0px 2px 8px 0px;
@@ -128,6 +128,20 @@ html.lenis body {
     font-weight: 400;
   }
 
+  /* HUD corner brackets (used on the dark pages). */
+  .brackets {
+    background:
+      linear-gradient(currentColor, currentColor) top left / 14px 1px,
+      linear-gradient(currentColor, currentColor) top left / 1px 14px,
+      linear-gradient(currentColor, currentColor) top right / 14px 1px,
+      linear-gradient(currentColor, currentColor) top right / 1px 14px,
+      linear-gradient(currentColor, currentColor) bottom left / 14px 1px,
+      linear-gradient(currentColor, currentColor) bottom left / 1px 14px,
+      linear-gradient(currentColor, currentColor) bottom right / 14px 1px,
+      linear-gradient(currentColor, currentColor) bottom right / 1px 14px;
+    background-repeat: no-repeat;
+  }
+
   [data-reveal] {
     opacity: 0;
     transform: translate3d(0, 24px, 0);
@@ -146,17 +160,27 @@ html.lenis body {
   }
 }
 
-/* Floating shop cards: each drifts gently on its own rhythm. */
+/* Floating shop cards: a slow vertical drift, with no tilt. */
 @keyframes drift-a {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(0, -16px, 0) rotate(-1.2deg); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -12px, 0); }
 }
 @keyframes drift-b {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(0, 14px, 0) rotate(1deg); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, 10px, 0); }
 }
 .drift-a { animation: drift-a 8s ease-in-out infinite; }
 .drift-b { animation: drift-b 10s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
-  .drift-a, .drift-b { animation: none; }
+  .drift-a,
+  .drift-b {
+    animation: none;
+  }
+}
+
+@keyframes leg-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
 }
