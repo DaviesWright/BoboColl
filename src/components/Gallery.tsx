@@ -1,6 +1,7 @@
 import {useState, type FormEvent} from 'react';
-import {brand, gallery, products, waLink, type Category} from '../content';
+import {brand, gallery, waLink, type Category} from '../content';
 import {useReveals} from '../hooks/useReveals';
+import {useCatalog} from '../lib/catalog';
 import {scrollToHash} from '../lib/scroll';
 import {openWhatsApp} from '../lib/track';
 import {trust} from '../trust';
@@ -20,12 +21,13 @@ const area = `${base} rounded-tile resize-none`;
 /** Browse the pieces, filter by category, and place an order on WhatsApp. */
 export function Gallery() {
   const ref = useReveals<HTMLElement>();
+  const {items} = useCatalog();
   const [filter, setFilter] = useState<Filter>('All');
   const [shown, setShown] = useState(PAGE_SIZE);
-  const [selectedId, setSelectedId] = useState(products[0].id);
+  const [selectedId, setSelectedId] = useState(items[0]?.id ?? '');
   const [status, setStatus] = useState<Status>('idle');
 
-  const matching = filter === 'All' ? products : products.filter((p) => p.category === filter);
+  const matching = filter === 'All' ? items : items.filter((p) => p.category === filter);
   const visible = matching.slice(0, shown);
   const hasMore = shown < matching.length;
 
@@ -49,7 +51,7 @@ export function Gallery() {
       return;
     }
     const data = new FormData(form);
-    const item = products.find((p) => p.id === String(data.get('product')));
+    const item = items.find((p) => p.id === String(data.get('product')));
     const text = [
       'Order enquiry',
       `Item: ${item ? `${item.name} (${item.price})` : 'Not specified'}`,
@@ -111,7 +113,7 @@ export function Gallery() {
                 </div>
                 <div className="flex flex-1 flex-col px-3 pt-4 pb-3">
                   <h2 className="text-base font-medium tracking-[-0.02em] text-ink">{p.name}</h2>
-                  <p className="mt-1 text-sm text-ink-soft">{p.description}</p>
+                  {p.description && <p className="mt-1 text-sm text-ink-soft">{p.description}</p>}
                   <div className="mt-auto flex items-center justify-between pt-5">
                     <span className="text-sm font-medium text-ink">{p.price}</span>
                     <button
@@ -159,7 +161,7 @@ export function Gallery() {
             <label className="block">
               <span className="mb-1.5 block px-1 text-xs text-ink-soft">Item</span>
               <select name="product" value={selectedId} onChange={(e) => setSelectedId(e.target.value)} className={`${input} appearance-none`}>
-                {products.map((p) => (
+                {items.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name} · {p.price}
                   </option>

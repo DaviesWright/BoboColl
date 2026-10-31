@@ -1,7 +1,8 @@
 import {useMemo, useState} from 'react';
-import {brand, products, visit, waLink, type Category, type Product} from '../content';
+import {brand, visit, waLink, type Category, type Product} from '../content';
 import {home} from '../home';
 import {useReveals} from '../hooks/useReveals';
+import {useCatalog} from '../lib/catalog';
 import {navigate} from '../lib/router';
 import {openWhatsApp} from '../lib/track';
 import {trust} from '../trust';
@@ -22,17 +23,18 @@ const orderItem = (p: Product) => {
 /** The shop front: carousel, search, featured pieces, how ordering works, about, visit, and the atelier link. */
 export function ShopHome() {
   const ref = useReveals<HTMLElement>();
+  const {items} = useCatalog();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('All');
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return products.filter(
+    return items.filter(
       (p) =>
         (filter === 'All' || p.category === filter) &&
         (q === '' || `${p.name} ${p.description} ${p.category}`.toLowerCase().includes(q)),
     );
-  }, [query, filter]);
+  }, [query, filter, items]);
 
   const featured = matches.slice(0, SHOWN);
 
@@ -108,7 +110,8 @@ export function ShopHome() {
                   </div>
                   <div className="flex flex-1 flex-col px-3 pt-4 pb-3">
                     <h2 className="text-base font-medium tracking-[-0.02em] text-ink">{p.name}</h2>
-                    <p className="mt-1 text-sm text-ink-soft">{p.price}</p>
+                    {p.description && <p className="mt-1 text-sm text-ink-soft">{p.description}</p>}
+                    <p className="mt-1 text-sm font-medium text-ink">{p.price}</p>
                     <button
                       type="button"
                       onClick={() => orderItem(p)}
