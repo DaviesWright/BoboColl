@@ -12,7 +12,7 @@ export const brand = {
   whatsappUrl: 'https://wa.me/233553161011',
   handle: '@BoboCollections_',
   instagramUrl: 'https://instagram.com/bobocollections_',
-  address: 'Adenta, Accra, Ghana', // REPLACE: Adenta Lotto Kiosk Junction
+  address: 'Adenta, Accra, Ghana',
 };
 
 export const nav = [
@@ -69,7 +69,8 @@ export const bespoke = {
 
 /* ------------------------------------------------------------------
    Gallery, shop and ordering
-   Every product and address below is a placeholder. Replace them.
+   The live catalogue is saved through /admin. The list below is only
+   a fallback, shown until the catalogue has been saved.
    ------------------------------------------------------------------ */
 
 /** Opens a WhatsApp chat with the atelier and fills in the message. */
@@ -91,11 +92,14 @@ export type Product = {
   category: Category;
   description: string;
   price: string;
-  /** Optional photo, e.g. '/media/products/shoe-01.jpg'. Without it, a plain card is shown. */
+  /** Optional photo, e.g. '/images/uploads/20261031171545-pumps.jpg'. Without it, a plain card is shown. */
   image?: string;
+  featured?: boolean;
+  position?: number;
+  visible?: boolean;
 };
 
-/** REPLACE: 20 shoes, 18 bags and 12 accessories. Each name starts with "Placeholder". */
+/** Fallback list: 20 shoes, 18 bags and 12 accessories. Each name starts with "Placeholder". */
 export const products: Product[] = [
   {id: 'shoe-01', name: 'Placeholder: Shoe 01', category: 'Shoes', description: 'REPLACE: description of this shoe.', price: 'On request'},
   {id: 'shoe-02', name: 'Placeholder: Shoe 02', category: 'Shoes', description: 'REPLACE: description of this shoe.', price: 'On request'},
@@ -158,9 +162,9 @@ export const visit = {
   },
   physical: {
     label: 'Physical shop',
-    street: 'Adenta Lotto Kiosk Junction', // REPLACE: confirm the building name
+    street: 'Adenta Lotto Kiosk Junction',
     area: 'Adenta, Accra',
     hours: 'Mon to Sat 07:00 to 19:00',
-    mapsUrl: 'REPLACE: Google Maps link',
+    mapsUrl: 'https://maps.app.goo.gl/pP9bXT2vtnr69HzLA',
   },
 };
