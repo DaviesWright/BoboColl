@@ -1,5 +1,6 @@
 import {useCatalog} from '../lib/catalog';
 
+/** Where each card floats. Classes below `md` hide the extra cards on phones. */
 const POSITIONS = [
   'left-[2%] top-[10%] w-[30vw] md:w-[190px]',
   'left-[20%] top-[52%] w-[30vw] md:w-[170px]',
@@ -10,7 +11,11 @@ const POSITIONS = [
   'left-[8%] bottom-[2%] w-[28vw] md:w-[170px] hidden md:block',
 ];
 
-/** Floating cards around the logo. Shows pieces flagged "featured"; falls back to a spread of the catalogue. */
+/**
+ * Floating product cards around the logo. Cards drift gently; motion stops
+ * for visitors who have asked for reduced motion. Shows pieces flagged
+ * "featured", otherwise a spread of the catalogue.
+ */
 export function ShopCarousel() {
   const {items} = useCatalog();
   const featured = items.filter((p) => p.featured);
@@ -19,7 +24,11 @@ export function ShopCarousel() {
   return (
     <div role="img" aria-label="A selection of pieces from the shop" className="relative mb-12 h-[340px] w-full overflow-hidden md:h-[480px]">
       {tiles.map((p, i) => (
-        <div key={p.id} className={`absolute rounded-card bg-white p-2 shadow-card ${POSITIONS[i]}`}>
+        <div
+          key={p.id}
+          className={`absolute rounded-card bg-white p-2 shadow-card ${POSITIONS[i]} ${i % 2 === 0 ? 'drift-a' : 'drift-b'}`}
+          style={{animationDelay: `${i * -1.3}s`}}
+        >
           <div className="relative aspect-square overflow-hidden rounded-tile bg-canvas">
             {p.image ? (
               <img src={p.image} alt="" loading="lazy" decoding="async" className="size-full object-cover" />

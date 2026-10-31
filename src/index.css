@@ -21,12 +21,12 @@ html.lenis body {
   --font-display: "Cormorant Garamond", "Times New Roman", serif;
   --font-sans: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Deep oxblood-black. Text on light pages, and the dark footer and atelier backgrounds. */
+  /* Deep oxblood-black: text on light pages, and the dark footer and atelier backgrounds. */
   --color-ink: #160808;
   --color-ink-2: #220d0d;
 
-  /* Shop surfaces: warm bone canvas, white cards, hairline borders. */
-  --color-canvas: #f5eadb;
+  /* Shop surfaces: near-white canvas, white cards, hairline borders. */
+  --color-canvas: #f7f5f1;
   --color-card: #ffffff;
   --color-line: #ebe0cf;
   --color-ink-soft: #6e5f58;
@@ -56,6 +56,10 @@ html.lenis body {
   --radius-card: 28px;
   --radius-tile: 20px;
   --radius-pill: 9999px;
+
+  /* Shop type and rhythm, taken from the reference: tight tracking, compact sections. */
+  --tracking-shop: -0.02em;
+  --spacing-section: 4rem;
 
   /* Elevation. Two-layer soft shadow for cards, a single soft shadow for small chips,
      and a red-tinted glow for the primary button. */
@@ -91,6 +95,7 @@ html.lenis body {
   }
   body {
     margin: 0;
+    letter-spacing: -0.01em;
     background: var(--color-ink);
     color: var(--color-bone);
     font-family: var(--font-sans);
@@ -139,4 +144,19 @@ html.lenis body {
       transform: none;
     }
   }
+}
+
+/* Floating shop cards: each drifts gently on its own rhythm. */
+@keyframes drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -16px, 0) rotate(-1.2deg); }
+}
+@keyframes drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, 14px, 0) rotate(1deg); }
+}
+.drift-a { animation: drift-a 8s ease-in-out infinite; }
+.drift-b { animation: drift-b 10s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .drift-a, .drift-b { animation: none; }
 }
