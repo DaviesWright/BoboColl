@@ -1,10 +1,10 @@
-// POST /admin/upload: stores an image in R2 (bound as IMAGES) and returns its public path.
+// POST /admin/upload: stores an image in R2 and returns its public path.
 
 export async function onRequestPost(context) {
   const { request, env } = context;
 
   if (!env.IMAGES) {
-    return json({ error: "R2 bucket 'IMAGES' is not bound to this Pages project." }, 500);
+    return json({ error: "R2 bucket 'IMAGES' is not bound." }, 500);
   }
 
   const formData = await request.formData();
@@ -23,7 +23,6 @@ export async function onRequestPost(context) {
     return json({ error: "File too large (50 MB max)." }, 400);
   }
 
-  // Key looks like uploads/20261031171545-photo.jpg (seconds precision, so names don't collide).
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
   const ts = new Date().toISOString().slice(0, 19).replace(/[-:T]/g, "");
   const key = `uploads/${ts}-${safeName}`;
@@ -32,7 +31,6 @@ export async function onRequestPost(context) {
     httpMetadata: { contentType: file.type },
   });
 
-  // Plain path, slash kept. The public route serves it directly.
   return json({ key, name: file.name, url: `/images/${key}` });
 }
 

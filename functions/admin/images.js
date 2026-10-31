@@ -1,10 +1,10 @@
-// GET /admin/images: lists uploaded images in R2 as JSON, newest first.
+// GET /admin/images: lists uploaded images as JSON, newest first.
 
 export async function onRequestGet(context) {
   const { env } = context;
 
   if (!env.IMAGES) {
-    return json({ error: "R2 bucket 'IMAGES' is not bound to this Pages project." }, 500);
+    return json({ error: "R2 bucket 'IMAGES' is not bound." }, 500);
   }
 
   const listed = await env.IMAGES.list({ prefix: "uploads/" });
