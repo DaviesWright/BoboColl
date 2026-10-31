@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+/* Lenis' own stylesheet (its package exports don't expose the .css path). */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   Type system
+   Display: Cormorant Garamond, used on the atelier page.
+   Text and labels: Jost, used across the shop.
+   ------------------------------------------------------------------ */
+@theme {
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Deep oxblood-black. Text on light pages, and the dark footer and atelier backgrounds. */
+  --color-ink: #160808;
+  --color-ink-2: #220d0d;
+
+  /* Shop surfaces: warm bone canvas, white cards, hairline borders. */
+  --color-canvas: #f5eadb;
+  --color-card: #ffffff;
+  --color-line: #ebe0cf;
+  --color-ink-soft: #6e5f58;
+
+  /* Brand red: the single accent across the site. */
+  --color-gold: #d7262f;
+
+  /* Shared neutrals for dark surfaces. */
+  --color-void: #160808;
+  --color-void-2: #220d0d;
+  --color-bone: #f4efe6;
+  --color-regolith: #c9ccd3;
+  --color-taupe: #8a7f72;
+  --color-dust: #8b909b;
+  --color-earth: #6fb6ff;
+  --color-sunlit: #f2e6c9;
+  --color-cognac: #9a5b2e;
+
+  /* Dark section backgrounds, all shades of the brand's oxblood-black. */
+  --color-manifesto: #160808;
+  --color-atelier: #2b0e10;
+  --color-collections: #0f0909;
+  --color-shop: #3a1316;
+  --color-bespoke: #1d1212;
+
+  /* Shape. Cards and tiles follow the reference's 28px and 20px radii; controls are pills. */
+  --radius-card: 28px;
+  --radius-tile: 20px;
+  --radius-pill: 9999px;
+
+  /* Elevation. Two-layer soft shadow for cards, a single soft shadow for small chips,
+     and a red-tinted glow for the primary button. */
+  --shadow-card: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
+  --shadow-soft: rgba(0, 0, 0, 0.06) 0px 2px 8px 0px;
+  --shadow-accent: rgba(215, 38, 47, 0.34) 0px 4px 24px 0px;
+
+  --text-hero: clamp(2.25rem, 8.6vw, 9rem);
+  --text-hero--line-height: 1;
+  --text-hero--letter-spacing: 0.24em;
+
+  --text-display: clamp(1.75rem, 4vw, 3.75rem);
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: 0.02em;
+
+  --text-lead: clamp(1.125rem, 1.6vw, 1.5rem);
+  --text-lead--line-height: 1.45;
+  --text-lead--letter-spacing: -0.01em;
+
+  --text-body: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  --text-body--line-height: 1.65;
+  --text-body--letter-spacing: -0.005em;
+
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: 0.16em;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    background: var(--color-ink);
+  }
+  body {
+    margin: 0;
+    background: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-bone);
+  }
+  :focus-visible {
+    outline: 1.5px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  .h-screen-s {
+    height: 100svh;
+  }
+
+  /* Small uppercase labels used throughout the site. */
+  .label {
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    transition:
+      opacity 1s cubic-bezier(0.2, 0.7, 0.1, 1),
+      transform 1s cubic-bezier(0.2, 0.7, 0.1, 1);
+  }
+  [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      transform: none;
+    }
+  }
+}
