@@ -1,4 +1,7 @@
-import {useCatalog} from '../lib/catalog';
+import {products} from '../content';
+
+/** Seven pieces, placed around the logo. */
+const TILES = products.filter((_, i) => i % 3 === 0).slice(0, 7);
 
 /** Where each card floats. Classes below `md` hide the extra cards on phones. */
 const POSITIONS = [
@@ -12,23 +15,14 @@ const POSITIONS = [
 ];
 
 /**
- * Floating product cards around the logo. Cards drift gently; motion stops
- * for visitors who have asked for reduced motion. Shows pieces flagged
- * "featured", otherwise a spread of the catalogue.
+ * Floating product cards around a centred logo. Each card carries a price tag.
+ * Decorative only; ordering happens in the sections below.
  */
 export function ShopCarousel() {
-  const {items} = useCatalog();
-  const featured = items.filter((p) => p.featured);
-  const tiles = (featured.length ? featured : items.filter((_, i) => i % 3 === 0)).slice(0, 7);
-
   return (
     <div role="img" aria-label="A selection of pieces from the shop" className="relative mb-12 h-[340px] w-full overflow-hidden md:h-[480px]">
-      {tiles.map((p, i) => (
-        <div
-          key={p.id}
-          className={`absolute rounded-card bg-white p-2 shadow-card ${POSITIONS[i]} ${i % 2 === 0 ? 'drift-a' : 'drift-b'}`}
-          style={{animationDelay: `${i * -1.3}s`}}
-        >
+      {TILES.map((p, i) => (
+        <div key={p.id} className={`absolute rounded-card bg-white p-2 shadow-card ${POSITIONS[i]}`}>
           <div className="relative aspect-square overflow-hidden rounded-tile bg-canvas">
             {p.image ? (
               <img src={p.image} alt="" loading="lazy" decoding="async" className="size-full object-cover" />

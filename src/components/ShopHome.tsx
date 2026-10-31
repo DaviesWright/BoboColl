@@ -1,61 +1,36 @@
+import {ShopCarousel} from './ShopCarousel';
 import {useMemo, useState} from 'react';
-import {brand, visit, waLink, type Category, type Product} from '../content';
+import {brand, products, visit, waLink, type Category, type Product} from '../content';
 import {home} from '../home';
 import {useReveals} from '../hooks/useReveals';
-import {useCatalog} from '../lib/catalog';
 import {navigate} from '../lib/router';
-import {openWhatsApp} from '../lib/track';
-import {trust} from '../trust';
-import {ShopCarousel} from './ShopCarousel';
 
 type Filter = 'All' | Category;
-type Sort = '' | 'lo' | 'hi';
 
 const FILTERS: Filter[] = ['All', 'Shoes', 'Bags', 'Accessories'];
 /** How many pieces appear on the home page. The full range is in the Gallery. */
 const SHOWN = 8;
-const GREETING = 'Hello Bobo Collections, I would like to see your current range.';
-
-/** Reads the first number in a price such as "GHS 450". Prices without a number sort last. */
-function priceValue(p: Product): number {
-  const m = p.price.replace(/,/g, '').match(/\d+(\.\d+)?/);
-  return m ? Number(m[0]) : Number.POSITIVE_INFINITY;
-}
-
-function byPrice(sort: Sort) {
-  return (a: Product, b: Product) => {
-    const x = priceValue(a);
-    const y = priceValue(b);
-    if (x === y) return 0;
-    if (!Number.isFinite(x)) return 1;
-    if (!Number.isFinite(y)) return -1;
-    return sort === 'lo' ? x - y : y - x;
-  };
-}
 
 /** Opens WhatsApp with one item pre-filled, so a customer can order in one tap. */
 const orderItem = (p: Product) => {
   const text = ['Order enquiry', `Item: ${p.name} (${p.price})`, 'Quantity: 1'].join('\n');
-  openWhatsApp(waLink(text), 'shop_order', p.name);
+  window.open(waLink(text), '_blank', 'noopener,noreferrer');
 };
 
-/** The shop front: carousel, search, filters, sort, featured pieces, how ordering works, about, visit, and the atelier link. */
+/** The shop front: search, filter, featured pieces, visit details, and a link to the atelier. */
 export function ShopHome() {
   const ref = useReveals<HTMLElement>();
-  const {items} = useCatalog();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('All');
-  const [sort, setSort] = useState<Sort>('');
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const list = items.filter(
+    return products.filter(
       (p) =>
         (filter === 'All' || p.category === filter) &&
         (q === '' || `${p.name} ${p.description} ${p.category}`.toLowerCase().includes(q)),
     );
-    return sort ? [...list].sort(byPrice(sort)) : list;
-  }, [query, filter, sort, items]);
+  }, [query, filter]);
 
   const featured = matches.slice(0, SHOWN);
 
@@ -63,8 +38,7 @@ export function ShopHome() {
     <>
       <section ref={ref} aria-labelledby="home-title" className="bg-canvas px-4 pt-32 pb-12 sm:px-8 md:px-[4vw]">
         <div className="mx-auto max-w-[1200px]">
-          <ShopCarousel />
-
+                    <ShopCarousel />
           <div data-reveal className="max-w-[46rem]">
             <p className="label text-gold">{home.eyebrow}</p>
             <h1 id="home-title" className="mt-3 font-sans text-4xl font-semibold tracking-[-0.03em] text-ink md:text-6xl">
@@ -82,33 +56,25 @@ export function ShopHome() {
               aria-label="Search the shop"
               className="w-full bg-transparent py-4 text-[15px] text-ink outline-none placeholder:text-ink-soft"
             />
+            <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-pill bg-gold text-white shadow-accent">
+              →
+            </span>
           </div>
 
-          <div data-reveal className="mt-6 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-b border-line">
-            <div role="group" aria-label="Filter by category" className="flex gap-7 overflow-x-auto">
-              {FILTERS.map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  aria-pressed={filter === f}
-                  onClick={() => setFilter(f)}
-                  className={`border-b-2 py-3 text-sm whitespace-nowrap transition-colors ${
-                    filter === f ? 'border-ink text-ink' : 'border-transparent text-ink-soft hover:text-ink'
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-
-            <label className="flex items-center gap-3 py-3 text-sm text-ink-soft">
-              Sort
-              <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="bg-transparent text-ink outline-none">
-                <option value="">Featured</option>
-                <option value="lo">Price: low to high</option>
-                <option value="hi">Price: high to low</option>
-              </select>
-            </label>
+          <div role="group" aria-label="Filter by category" className="mt-6 flex flex-wrap gap-2">
+            {FILTERS.map((f) => (
+              <button
+                key={f}
+                type="button"
+                aria-pressed={filter === f}
+                onClick={() => setFilter(f)}
+                className={`rounded-pill border px-4 py-2 text-sm transition-colors ${
+                  filter === f ? 'border-ink bg-ink text-white' : 'border-line bg-white text-ink hover:border-ink'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
           </div>
         </div>
       </section>
@@ -119,7 +85,11 @@ export function ShopHome() {
             <p className="text-sm text-ink-soft" aria-live="polite">
               {matches.length} pieces found
             </p>
-            <button type="button" onClick={() => navigate('/gallery')} className="text-sm font-medium text-ink underline underline-offset-4 hover:text-gold">
+            <button
+              type="button"
+              onClick={() => navigate('/gallery')}
+              className="text-sm font-medium text-ink underline underline-offset-4 hover:text-gold"
+            >
               See all in the gallery
             </button>
           </div>
@@ -139,8 +109,7 @@ export function ShopHome() {
                   </div>
                   <div className="flex flex-1 flex-col px-3 pt-4 pb-3">
                     <h2 className="text-base font-medium tracking-[-0.02em] text-ink">{p.name}</h2>
-                    {p.description && <p className="mt-1 text-sm text-ink-soft">{p.description}</p>}
-                    <p className="mt-1 text-sm font-medium text-ink">{p.price}</p>
+                    <p className="mt-1 text-sm text-ink-soft">{p.price}</p>
                     <button
                       type="button"
                       onClick={() => orderItem(p)}
@@ -155,52 +124,6 @@ export function ShopHome() {
           )}
         </div>
       </section>
-
-      <section aria-labelledby="how-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
-        <div className="mx-auto max-w-[1200px]">
-          <h2 id="how-title" className="font-sans text-2xl font-semibold tracking-[-0.02em] text-ink">
-            How ordering works
-          </h2>
-          <ol className="mt-6 grid gap-3 md:grid-cols-3">
-            {trust.steps.map((s, i) => (
-              <li key={s.title} className="rounded-card bg-white p-6 shadow-card">
-                <span className="text-sm font-semibold text-gold">0{i + 1}</span>
-                <h3 className="mt-2 text-base font-medium text-ink">{s.title}</h3>
-                <p className="mt-2 text-sm text-ink-soft">{s.body}</p>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-4 text-sm text-ink-soft">{trust.returns}</p>
-        </div>
-      </section>
-
-      <section aria-labelledby="about-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
-        <div className="mx-auto max-w-[1200px] rounded-card bg-white p-6 shadow-card md:p-12">
-          <p className="label text-gold">{trust.about.eyebrow}</p>
-          <h2 id="about-title" className="mt-3 font-sans text-3xl font-semibold tracking-[-0.03em] text-ink">
-            {trust.about.heading}
-          </h2>
-          <p className="mt-4 max-w-[46rem] text-base text-ink-soft">{trust.about.body}</p>
-        </div>
-      </section>
-
-      {trust.reviews.length > 0 && (
-        <section aria-labelledby="reviews-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
-          <div className="mx-auto max-w-[1200px]">
-            <h2 id="reviews-title" className="font-sans text-2xl font-semibold tracking-[-0.02em] text-ink">
-              What customers say
-            </h2>
-            <ul className="mt-6 grid gap-3 md:grid-cols-3">
-              {trust.reviews.map((r) => (
-                <li key={r.name + r.quote} className="rounded-card bg-white p-6 shadow-card">
-                  <p className="text-base text-ink">“{r.quote}”</p>
-                  <p className="mt-4 text-sm text-ink-soft">{r.name}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )}
 
       <section aria-labelledby="visit-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
         <div className="mx-auto grid max-w-[1200px] gap-8 rounded-card bg-white p-6 shadow-card md:grid-cols-2 md:p-12" data-reveal>
@@ -235,32 +158,24 @@ export function ShopHome() {
         </div>
       </section>
 
-      <section aria-labelledby="made-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
-        <div data-reveal className="mx-auto flex max-w-[1200px] flex-col gap-6 rounded-card bg-white p-6 shadow-card md:flex-row md:items-center md:justify-between md:p-12">
+      <section aria-labelledby="made-title" className="bg-atelier px-6 py-24 sm:px-8 md:px-[6vw]">
+        <div data-reveal className="mx-auto max-w-[1200px] md:flex md:items-end md:justify-between md:gap-12">
           <div>
             <p className="label text-gold">{home.madeEyebrow}</p>
-            <h2 id="made-title" className="mt-3 font-sans text-2xl font-semibold tracking-[-0.02em] text-ink">
+            <h2 id="made-title" className="mt-3 font-display text-display font-light text-bone">
               {home.madeHeading}
             </h2>
-            <p className="mt-3 max-w-[34rem] text-sm text-ink-soft">{home.madeBody}</p>
+            <p className="mt-4 max-w-[34rem] text-body text-bone/70">{home.madeBody}</p>
           </div>
           <button
             type="button"
             onClick={() => navigate('/atelier')}
-            className="rounded-pill border border-ink px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-ink hover:text-white"
+            className="label mt-8 rounded-[2px] border border-gold px-6 py-3.5 text-gold transition-colors hover:bg-gold hover:text-ink md:mt-0"
           >
             {home.madeCta}
           </button>
         </div>
       </section>
-
-      <button
-        type="button"
-        onClick={() => openWhatsApp(waLink(GREETING), 'mobile_bar')}
-        className="label fixed inset-x-4 bottom-4 z-40 flex h-14 items-center justify-center rounded-pill bg-ink text-bone shadow-card md:hidden"
-      >
-        Order on WhatsApp
-      </button>
     </>
   );
 }

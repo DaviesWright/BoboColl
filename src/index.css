@@ -14,19 +14,19 @@ html.lenis body {
 
 /* ------------------------------------------------------------------
    Type system
-   Display: Cormorant Garamond, used on the atelier page and in headings.
-   Text and labels: Hanken Grotesk, used across the shop.
+   Display: Cormorant Garamond, used on the atelier page.
+   Text and labels: Jost, used across the shop.
    ------------------------------------------------------------------ */
 @theme {
   --font-display: "Cormorant Garamond", "Times New Roman", serif;
-  --font-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Deep oxblood-black: text on light pages, and the dark footer and atelier backgrounds. */
+  /* Deep oxblood-black. Text on light pages, and the dark footer and atelier backgrounds. */
   --color-ink: #160808;
   --color-ink-2: #220d0d;
 
-  /* Shop surfaces: near-white canvas, white cards, hairline borders. */
-  --color-canvas: #f7f5f1;
+  /* Shop surfaces: warm bone canvas, white cards, hairline borders. */
+  --color-canvas: #f5eadb;
   --color-card: #ffffff;
   --color-line: #ebe0cf;
   --color-ink-soft: #6e5f58;
@@ -52,16 +52,12 @@ html.lenis body {
   --color-shop: #3a1316;
   --color-bespoke: #1d1212;
 
-  /* Shape. Cards and tiles follow the 28px and 20px radii; controls are pills. */
+  /* Shape. Cards and tiles follow the reference's 28px and 20px radii; controls are pills. */
   --radius-card: 28px;
   --radius-tile: 20px;
   --radius-pill: 9999px;
 
-  /* Shop rhythm */
-  --tracking-shop: -0.02em;
-  --spacing-section: 4rem;
-
-  /* Elevation: two-layer soft shadow for cards, a single soft shadow for small chips,
+  /* Elevation. Two-layer soft shadow for cards, a single soft shadow for small chips,
      and a red-tinted glow for the primary button. */
   --shadow-card: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
   --shadow-soft: rgba(0, 0, 0, 0.06) 0px 2px 8px 0px;
@@ -95,7 +91,6 @@ html.lenis body {
   }
   body {
     margin: 0;
-    letter-spacing: -0.01em;
     background: var(--color-ink);
     color: var(--color-bone);
     font-family: var(--font-sans);
@@ -128,20 +123,6 @@ html.lenis body {
     font-weight: 400;
   }
 
-  /* HUD corner brackets (used on the dark pages). */
-  .brackets {
-    background:
-      linear-gradient(currentColor, currentColor) top left / 14px 1px,
-      linear-gradient(currentColor, currentColor) top left / 1px 14px,
-      linear-gradient(currentColor, currentColor) top right / 14px 1px,
-      linear-gradient(currentColor, currentColor) top right / 1px 14px,
-      linear-gradient(currentColor, currentColor) bottom left / 14px 1px,
-      linear-gradient(currentColor, currentColor) bottom left / 1px 14px,
-      linear-gradient(currentColor, currentColor) bottom right / 14px 1px,
-      linear-gradient(currentColor, currentColor) bottom right / 1px 14px;
-    background-repeat: no-repeat;
-  }
-
   [data-reveal] {
     opacity: 0;
     transform: translate3d(0, 24px, 0);
@@ -157,30 +138,5 @@ html.lenis body {
     [data-reveal] {
       transform: none;
     }
-  }
-}
-
-/* Floating shop cards: a slow vertical drift, with no tilt. */
-@keyframes drift-a {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(0, -12px, 0); }
-}
-@keyframes drift-b {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(0, 10px, 0); }
-}
-.drift-a { animation: drift-a 8s ease-in-out infinite; }
-.drift-b { animation: drift-b 10s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) {
-  .drift-a,
-  .drift-b {
-    animation: none;
-  }
-}
-
-@keyframes leg-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 12px, 0);
   }
 }
