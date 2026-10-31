@@ -1,7 +1,4 @@
-import {products} from '../content';
-
-/** Seven pieces, placed around the logo. */
-const TILES = products.filter((_, i) => i % 3 === 0).slice(0, 7);
+import {useCatalog} from '../lib/catalog';
 
 /** Where each card floats. Classes below `md` hide the extra cards on phones. */
 const POSITIONS = [
@@ -15,14 +12,30 @@ const POSITIONS = [
 ];
 
 /**
- * Floating product cards around a centred logo. Each card carries a price tag.
- * Decorative only; ordering happens in the sections below.
+ * Floating product cards around the logo. The logo sits behind the cards, so the
+ * pieces are always in front. Cards drift gently; motion stops for visitors who
+ * have asked for reduced motion.
  */
 export function ShopCarousel() {
+  const {items} = useCatalog();
+  const featured = items.filter((p) => p.featured);
+  const tiles = (featured.length ? featured : items.filter((_, i) => i % 3 === 0)).slice(0, 7);
+
   return (
     <div role="img" aria-label="A selection of pieces from the shop" className="relative mb-12 h-[340px] w-full overflow-hidden md:h-[480px]">
-      {TILES.map((p, i) => (
-        <div key={p.id} className={`absolute rounded-card bg-white p-2 shadow-card ${POSITIONS[i]}`}>
+      <img
+        src="/media/logo.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute top-1/2 left-1/2 w-[min(40vw,260px)] -translate-x-1/2 -translate-y-1/2 mix-blend-multiply"
+      />
+
+      {tiles.map((p, i) => (
+        <div
+          key={p.id}
+          className={`absolute z-10 rounded-card bg-white p-2 shadow-card ${POSITIONS[i]} ${i % 2 === 0 ? 'drift-a' : 'drift-b'}`}
+          style={{animationDelay: `${i * -1.3}s`}}
+        >
           <div className="relative aspect-square overflow-hidden rounded-tile bg-canvas">
             {p.image ? (
               <img src={p.image} alt="" loading="lazy" decoding="async" className="size-full object-cover" />
@@ -36,10 +49,6 @@ export function ShopCarousel() {
           <p className="px-1 pt-2 pb-1 text-xs font-medium text-ink">{p.name}</p>
         </div>
       ))}
-
-      <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-        <img src="/media/logo.png" alt="" className="w-[min(46vw,300px)] mix-blend-multiply" />
-      </div>
     </div>
   );
 }
