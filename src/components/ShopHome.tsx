@@ -1,9 +1,11 @@
-import {ShopCarousel} from './ShopCarousel';
 import {useMemo, useState} from 'react';
 import {brand, products, visit, waLink, type Category, type Product} from '../content';
 import {home} from '../home';
 import {useReveals} from '../hooks/useReveals';
 import {navigate} from '../lib/router';
+import {openWhatsApp} from '../lib/track';
+import {trust} from '../trust';
+import {ShopCarousel} from './ShopCarousel';
 
 type Filter = 'All' | Category;
 
@@ -14,10 +16,10 @@ const SHOWN = 8;
 /** Opens WhatsApp with one item pre-filled, so a customer can order in one tap. */
 const orderItem = (p: Product) => {
   const text = ['Order enquiry', `Item: ${p.name} (${p.price})`, 'Quantity: 1'].join('\n');
-  window.open(waLink(text), '_blank', 'noopener,noreferrer');
+  openWhatsApp(waLink(text), 'shop_order', p.name);
 };
 
-/** The shop front: search, filter, featured pieces, visit details, and a link to the atelier. */
+/** The shop front: carousel, search, featured pieces, how ordering works, about, visit, and the atelier link. */
 export function ShopHome() {
   const ref = useReveals<HTMLElement>();
   const [query, setQuery] = useState('');
@@ -38,7 +40,8 @@ export function ShopHome() {
     <>
       <section ref={ref} aria-labelledby="home-title" className="bg-canvas px-4 pt-32 pb-12 sm:px-8 md:px-[4vw]">
         <div className="mx-auto max-w-[1200px]">
-                    <ShopCarousel />
+          <ShopCarousel />
+
           <div data-reveal className="max-w-[46rem]">
             <p className="label text-gold">{home.eyebrow}</p>
             <h1 id="home-title" className="mt-3 font-sans text-4xl font-semibold tracking-[-0.03em] text-ink md:text-6xl">
@@ -85,11 +88,7 @@ export function ShopHome() {
             <p className="text-sm text-ink-soft" aria-live="polite">
               {matches.length} pieces found
             </p>
-            <button
-              type="button"
-              onClick={() => navigate('/gallery')}
-              className="text-sm font-medium text-ink underline underline-offset-4 hover:text-gold"
-            >
+            <button type="button" onClick={() => navigate('/gallery')} className="text-sm font-medium text-ink underline underline-offset-4 hover:text-gold">
               See all in the gallery
             </button>
           </div>
@@ -124,6 +123,52 @@ export function ShopHome() {
           )}
         </div>
       </section>
+
+      <section aria-labelledby="how-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
+        <div className="mx-auto max-w-[1200px]">
+          <h2 id="how-title" className="font-sans text-2xl font-semibold tracking-[-0.02em] text-ink">
+            How ordering works
+          </h2>
+          <ol className="mt-6 grid gap-3 md:grid-cols-3">
+            {trust.steps.map((s, i) => (
+              <li key={s.title} className="rounded-card bg-white p-6 shadow-card">
+                <span className="text-sm font-semibold text-gold">0{i + 1}</span>
+                <h3 className="mt-2 text-base font-medium text-ink">{s.title}</h3>
+                <p className="mt-2 text-sm text-ink-soft">{s.body}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-4 text-sm text-ink-soft">{trust.returns}</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="about-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
+        <div className="mx-auto max-w-[1200px] rounded-card bg-white p-6 shadow-card md:p-12">
+          <p className="label text-gold">{trust.about.eyebrow}</p>
+          <h2 id="about-title" className="mt-3 font-sans text-3xl font-semibold tracking-[-0.03em] text-ink">
+            {trust.about.heading}
+          </h2>
+          <p className="mt-4 max-w-[46rem] text-base text-ink-soft">{trust.about.body}</p>
+        </div>
+      </section>
+
+      {trust.reviews.length > 0 && (
+        <section aria-labelledby="reviews-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
+          <div className="mx-auto max-w-[1200px]">
+            <h2 id="reviews-title" className="font-sans text-2xl font-semibold tracking-[-0.02em] text-ink">
+              What customers say
+            </h2>
+            <ul className="mt-6 grid gap-3 md:grid-cols-3">
+              {trust.reviews.map((r) => (
+                <li key={r.name + r.quote} className="rounded-card bg-white p-6 shadow-card">
+                  <p className="text-base text-ink">“{r.quote}”</p>
+                  <p className="mt-4 text-sm text-ink-soft">{r.name}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       <section aria-labelledby="visit-title" className="bg-canvas px-4 pb-20 sm:px-8 md:px-[4vw]">
         <div className="mx-auto grid max-w-[1200px] gap-8 rounded-card bg-white p-6 shadow-card md:grid-cols-2 md:p-12" data-reveal>

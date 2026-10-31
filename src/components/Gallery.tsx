@@ -2,6 +2,8 @@ import {useState, type FormEvent} from 'react';
 import {brand, gallery, products, waLink, type Category} from '../content';
 import {useReveals} from '../hooks/useReveals';
 import {scrollToHash} from '../lib/scroll';
+import {openWhatsApp} from '../lib/track';
+import {trust} from '../trust';
 
 type Filter = 'All' | Category;
 type Status = 'idle' | 'invalid' | 'opened';
@@ -58,7 +60,7 @@ export function Gallery() {
       `Name: ${String(data.get('name'))}`,
       `Notes: ${String(data.get('notes') || '—')}`,
     ].join('\n');
-    window.open(waLink(text), '_blank', 'noopener,noreferrer');
+    openWhatsApp(waLink(text), 'gallery_order', item?.name ?? 'unspecified');
     setStatus('opened');
   };
 
@@ -150,6 +152,7 @@ export function Gallery() {
               Your order opens in WhatsApp with the details filled in. Send it to confirm. We reply with availability, price and delivery
               before you pay.
             </p>
+            <p className="mt-4 max-w-[30rem] text-sm text-ink-soft">{trust.payment}</p>
           </div>
 
           <form noValidate onSubmit={onSubmit} aria-describedby="order-status" className="space-y-4" data-reveal>
